@@ -22,30 +22,31 @@ df_train = (df_train - min_) / (max_ - min_)
 df_valid = (df_valid - min_) / (max_ - min_)
 
 # Split features and target
-X_train = df_train.drop('quality', axis=1)
-X_valid = df_valid.drop('quality', axis=1)
-y_train = df_train['quality']
-y_valid = df_valid['quality']
+X_train = df_train.drop('quality', axis=1) #Training features, drop quality column
+X_valid = df_valid.drop('quality', axis=1) #Validation features, drop quality column
+y_train = df_train['quality'] #Training target
+y_valid = df_valid['quality'] #Validation target
 
 print(X_train.shape)
 
-model = keras.Sequential([
-    layers.Dense(512, activation='relu', input_shape=[11]),
+# Linear stack of layers
+model = keras.Sequential([ 
+    layers.Dense(512, activation='relu', input_shape=[11]), # 512 units, Rectified Linear Unit (ReLU) activation, 11 input shape (12 cols)
     layers.Dense(512, activation='relu'),
     layers.Dense(512, activation='relu'),
-    layers.Dense(1),
+    layers.Dense(1),    # output, 1 unit
 ])
 
 model.compile(
-    optimizer='adam',
-    loss='mae',
+    optimizer='adam', # Adam is a SGD, Stochastic (random) Gradient (direction), Descent (decend towards min) algorithm, self-tuning
+    loss='mae', # Mean Absolute Error (MAE), a loss function, try to get to lowest value
 )
 
 history = model.fit(
     X_train, y_train,
     validation_data=(X_valid, y_valid),
-    batch_size=256,
-    epochs=10,
+    batch_size=256, # feed the optimizer 512 rows of training data at a time
+    epochs=10,      # do that 10 times all the way through the dataset
 )
 
 # convert the training history to a dataframe
